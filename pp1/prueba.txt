@@ -1,15 +1,1 @@
-void         line 6 cols 2-5 is T_Void 
-main         line 6 cols 7-10 is T_Identifier 
-(            line 6 cols 11-11 is '(' 
-)            line 6 cols 12-12 is ')' 
-{            line 7 cols 4-4 is '{' 
-Print        line 8 cols 5-9 is T_Identifier 
-(            line 8 cols 10-10 is '(' 
-2            line 8 cols 12-12 is T_IntConstant (value = 2)
-+            line 8 cols 14-14 is '+' 
-2            line 8 cols 16-16 is T_IntConstant (value = 2)
-*            line 8 cols 18-18 is '*' 
-10           line 8 cols 20-21 is T_IntConstant (value = 10)
-)            line 8 cols 22-22 is ')' 
-;            line 8 cols 23-23 is ';' 
-}            line 9 cols 4-4 is '}' 
+"all done!"  line 16 cols 1-11 is T_StringConstant (value = "all done!")

@@ -484,7 +484,7 @@ char *yytext;
  * If you decide to use lex for the preprocesor, put your rules
  * here, otherwise the file can remain empty.
  */
-#line 11 "dpp.l"
+#line 10 "dpp.l"
 #include <map>
 #include <string>
 #include "errors.h"
@@ -497,15 +497,13 @@ int line = 1;
 
 int c_char(string s, char c) {
   int count = 0;
-  
   for (int i = 0; i < s.size(); i++)
     if (s[i] == c) count++;
-
   return count;
 }
 
 
-#line 509 "dpp.yy.c"
+#line 507 "dpp.yy.c"
 
 #define INITIAL 0
 #define COM_STATE 1
@@ -703,10 +701,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 43 "dpp.l"
+#line 39 "dpp.l"
 
-
-#line 710 "dpp.yy.c"
+#line 707 "dpp.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -792,64 +789,52 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 45 "dpp.l"
-{line++;
-	string text = strdup(yytext);
-	printf("%s", text.c_str());
-}
+#line 40 "dpp.l"
+{line++; string text = strdup(yytext); printf("%s", text.c_str());}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 50 "dpp.l"
-{
-	BEGIN(COM_STATE);
-	yy_push_state(COM_STATE);
-}
+#line 42 "dpp.l"
+{BEGIN(COM_STATE); yy_push_state(COM_STATE);}
 	YY_BREAK
 case YY_STATE_EOF(COM_STATE):
-#line 55 "dpp.l"
-{
-	ReportError::UntermComment(); 	
-	yy_pop_state();
-}
+#line 44 "dpp.l"
+{ReportError::UntermComment(); yy_pop_state();}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 60 "dpp.l"
+#line 46 "dpp.l"
 { /* printf("%s", "\n"); */ }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 62 "dpp.l"
+#line 48 "dpp.l"
 { 
 	string text = strdup(yytext);
 	int nrow = c_char(text, '\n');
 	for(int i = 0; i < nrow; i++){
 		printf("%s", "\n");
 	}
-
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 71 "dpp.l"
+#line 56 "dpp.l"
 { 
-	
 	string name_replacement, name, replacement, text;
 	int find_space;
 	text = strdup(yytext);
-
 	name_replacement = text.substr(8); 
 	find_space = name_replacement.find(" "); 
 	name = name_replacement.substr(0, find_space);
-	replacement = name_replacement.substr(find_space);
+	replacement = name_replacement.substr(find_space + 1);
 	macromap.insert(make_pair(name, replacement)); 
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 84 "dpp.l"
+#line 67 "dpp.l"
 {
 	string text, name, replacement;
 	text = strdup(yytext);
@@ -864,25 +849,20 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 96 "dpp.l"
-{
-	ReportError::InvalidDirective(line); 
-}
+#line 79 "dpp.l"
+{ReportError::InvalidDirective(line);}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 100 "dpp.l"
-{
-	string text = strdup(yytext);
-	printf("%s", text.c_str());
-}
+#line 81 "dpp.l"
+{ string text = strdup(yytext); printf("%s", text.c_str());}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 105 "dpp.l"
+#line 83 "dpp.l"
 ECHO;
 	YY_BREAK
-#line 886 "dpp.yy.c"
+#line 866 "dpp.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1925,6 +1905,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 105 "dpp.l"
+#line 83 "dpp.l"
+
 
 
