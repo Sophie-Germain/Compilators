@@ -496,10 +496,10 @@ std::map<std::string, std::string>macromap;
 int line = 1;
 
 int c_char(string s, char c) {
-  int count = 0;
+  int n = 0;
   for (int i = 0; i < s.size(); i++)
-    if (s[i] == c) count++;
-  return count;
+    if (s[i] == c) n++;
+  return n;
 }
 
 
