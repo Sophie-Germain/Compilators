@@ -12,14 +12,9 @@
  * or C++ variable declarations/prototypes that are needed by your code here.
  */
 
-/*#include <stdbool.h>
+#include <stdbool.h>
 #include <sstream>
 using std::stringstream;
-#include <string.h>
-#include "scanner.h"
-#include "utility.h" // for PrintDebug()
-#include "errors.h"
-*/
 #include <string.h>
 #include "scanner.h"
 #include "utility.h" // for PrintDebug()
@@ -76,14 +71,16 @@ hex_entero       (0[Xx]{hex_dig}+)
 entero           ({dig}+)
 exponente          ([Ee][-+]?{entero})
 DOUBLE            ({entero}"."{dig}*{exponente}?)
-INI_CADENA        (\"[^\"\n]*)
+INI_CADENA        (\"[^"\n]*)
 CADENA            ({INI_CADENA}\")
 IDENTIF        ([a-zA-Z][a-zA-Z_0-9]*)
-operador          ([-+%=.,;!<>()[\]{}])
+operador          ([-+/*%=.,;!<>()[\]{}])
 INICOMM       ("/*")
 FINCOMM       ("*/")
-COMM    ("//".*)
- 
+COMM    ("//"[^\n]*)
+
+%x COMMENT    
+
 %%             /* BEGIN RULES SECTION */
  /* All patterns and actions should be placed between the start and stop
   * %% markers which delimit the Rules section. 
@@ -132,9 +129,11 @@ COMM    ("//".*)
 "!="                { return T_NotEqual;    }
 "&&"                { return T_And;         }
 "||"                { return T_Or;          }
-"\n"                {nrow++; ncol = 1;}
-[\t]                {ncol += 8;}
-[ \t\n]             {};
+[\n]                { nrow++; ncol = 1;}
+[\t]                { ncol += 8; }  
+[ \t\n]+             ;
+{operador}          { return yytext[0];     }
+
  
 "true"|"false"      { yylval.boolConstant = (yytext[0] == 't');
                          return T_BoolConstant; }
@@ -144,9 +143,8 @@ COMM    ("//".*)
                          return T_IntConstant; }
 {DOUBLE}            { yylval.doubleConstant = atof(yytext);
                          return T_DoubleConstant; }
-
-(\"[^\"\n]*)\"       { yylval.stringConstant = strdup(yytext); return T_StringConstant; }
-
+{CADENA}            { yylval.stringConstant = strdup(yytext); 
+                         return T_StringConstant; }
 {INI_CADENA}        { ReportError::UntermString(&yylloc, yytext); }
 
 
@@ -156,10 +154,9 @@ COMM    ("//".*)
                        yylval.identifier[MaxIdentLen] = '\0';
                        return T_Identifier; }
 
+.                   { ReportError::UnrecogChar(&yylloc, yytext[0]); }
 
-. { ReportError::UnrecogChar(&yylloc, yytext[0]); }
 
-([-+=.,;!<>(){}]) {return yytext[0];};
 
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
@@ -199,7 +196,7 @@ void InitScanner()
 
 static void DoBeforeEachAction()
 {
-   yylloc.first_line   = nrow;
+   //yylloc.first_line   = nrow;
    yylloc.first_column = ncol;
    yylloc.last_column  = ncol + yyleng - 1;
    ncol += yyleng;
