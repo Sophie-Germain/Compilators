@@ -14,7 +14,7 @@
 
 using namespace std;
 
-std::map<std::string, std::string>mapOfMacros;
+std::map<std::string, std::string>macromap;
 
 int line = 1;
 
@@ -78,17 +78,17 @@ MACRO_USE \#{NAME}
 	find_space = name_replacement.find(" "); 
 	name = name_replacement.substr(0, find_space);
 	replacement = name_replacement.substr(find_space);
-	mapOfMacros.insert(make_pair(name, replacement)); 
+	macromap.insert(make_pair(name, replacement)); 
 }
 
 {MACRO_USE} {
 	string text, name, replacement;
 	text = strdup(yytext);
 	name = text.substr(1);
-	if(mapOfMacros.find(name) == mapOfMacros.end()){
+	if(macromap.find(name) == macromap.end()){
 		ReportError::InvalidDirective(line); 
 	} else {
-		replacement = mapOfMacros.find(name)->second;
+		replacement = macromap.find(name)->second;
 		printf("%s", replacement.c_str());
 	}
 }
