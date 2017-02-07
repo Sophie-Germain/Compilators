@@ -5,16 +5,26 @@
 
 %{
 
+
 /* The text within this first region delimited by %{ and %} is assumed to
  * be C/C++ code and will be copied verbatim to the lex.yy.c file ahead
  * of the definitions of the yylex() function. Add other header file inclusions
  * or C++ variable declarations/prototypes that are needed by your code here.
  */
 
+/*#include <stdbool.h>
+#include <sstream>
+using std::stringstream;
 #include <string.h>
 #include "scanner.h"
 #include "utility.h" // for PrintDebug()
 #include "errors.h"
+*/
+#include <string.h>
+#include "scanner.h"
+#include "utility.h" // for PrintDebug()
+#include "errors.h"
+
 
 /* Global variable: yylval
  * -----------------------
@@ -43,6 +53,9 @@ struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
  * be called once for each pattern scanned from the file, before
  * executing its action.
  */
+
+/*for yylloc */
+static int ncol, nrow;
 static void DoBeforeEachAction(); 
 #define YY_USER_ACTION DoBeforeEachAction();
 
@@ -54,12 +67,99 @@ static void DoBeforeEachAction();
   * as a simple substitution mechanism that allows for more readable
   * entries in the Rules section later. 
   */
-
-
+ 
+/* Definiciones: para leer más fácilmente
+ */
+dig             ([0-9])
+hex_dig         ([0-9a-fA-F])
+hex_entero       (0[Xx]{hex_dig}+)
+entero           ({dig}+)
+exponente          ([Ee][-+]?{entero})
+DOUBLE            ({entero}"."{dig}*{exponente}?)
+INI_CADENA        (\"[^\"\n]*)
+CADENA            ({INI_CADENA}\")
+IDENTIF        ([a-zA-Z][a-zA-Z_0-9]*)
+operador          ([-+%=.,;!<>()[\]{}])
+INICOMM       ("/*")
+FINCOMM       ("*/")
+COMM    ("//".*)
+ 
 %%             /* BEGIN RULES SECTION */
  /* All patterns and actions should be placed between the start and stop
   * %% markers which delimit the Rules section. 
   */ 
+
+"void"              { return T_Void;        }  
+"int"               { return T_Int;         }   
+"double"            { return T_Double;      }   
+"bool"              { return T_Bool;        }    
+"string"            { return T_String;      }   
+"class"             { return T_Class;       }   
+"null"              { return T_Null;        }   
+"extends"           { return T_Extends;     }   
+"this"              { return T_This;        }    
+"interface"         { return T_Interface;   }   
+"implements"        { return T_Implements;  }   
+"while"             { return T_While;       }   
+"for"               { return T_For;         }   
+"if"                { return T_If;          }   
+"else"              { return T_Else;        }   
+"return"            { return T_Return;      }   
+"break"             { return T_Break;       }   
+"New"               { return T_New;         }   
+"NewArray"          { return T_NewArray;    }
+"+"    {return '+';}
+"-"    {return '-';}
+"*"    {return '*';}
+"/"    {return '/';}
+"%"    {return '%';}
+"<"    {return '<';}
+">"    {return '>';}
+"="    {return '=';}
+"!"    {return '!';}
+";"    {return ';';}
+","    {return ',';}
+"."    {return '.';}
+"["    {return '[';}
+"]"    {return ']';}
+"("    {return '(';}
+")"    {return ')';}
+"{"    {return '{';}
+"}"    {return '}';}      
+"<="                { return T_LessEqual;   }
+">="                { return T_GreaterEqual;}
+"=="                { return T_Equal;       }
+"!="                { return T_NotEqual;    }
+"&&"                { return T_And;         }
+"||"                { return T_Or;          }
+"\n"                {nrow++; ncol = 1;}
+[\t]                {ncol += 8;}
+[ \t\n]             {};
+ 
+"true"|"false"      { yylval.boolConstant = (yytext[0] == 't');
+                         return T_BoolConstant; }
+{entero}           { yylval.integerConstant = strtol(yytext, NULL, 10);
+                         return T_IntConstant; }
+{hex_entero}       { yylval.integerConstant = strtol(yytext, NULL, 16);
+                         return T_IntConstant; }
+{DOUBLE}            { yylval.doubleConstant = atof(yytext);
+                         return T_DoubleConstant; }
+
+(\"[^\"\n]*)\"       { yylval.stringConstant = strdup(yytext); return T_StringConstant; }
+
+{INI_CADENA}        { ReportError::UntermString(&yylloc, yytext); }
+
+
+{IDENTIF}        { if (strlen(yytext) > MaxIdentLen)
+                         ReportError::LongIdentifier(&yylloc, yytext);
+                       strncpy(yylval.identifier, yytext, MaxIdentLen);
+                       yylval.identifier[MaxIdentLen] = '\0';
+                       return T_Identifier; }
+
+
+. { ReportError::UnrecogChar(&yylloc, yytext[0]); }
+
+([-+=.,;!<>(){}]) {return yytext[0];};
 
 %%
 /* The closing %% above marks the end of the Rules section and the beginning
@@ -81,10 +181,13 @@ static void DoBeforeEachAction();
  * be helpful when debugging your scanner. Please be sure the variable is
  * set to false when submitting your final version.
  */
+
 void InitScanner()
 {
     PrintDebug("lex", "Initializing scanner");
     yy_flex_debug = false;
+    nrow = 1;
+    ncol = 1;
 }
 
 
@@ -93,6 +196,12 @@ void InitScanner()
  * This function is installed as the YY_USER_ACTION. This is a place
  * to group code common to all actions.
  */
+
 static void DoBeforeEachAction()
 {
+   yylloc.first_line   = nrow;
+   yylloc.first_column = ncol;
+   yylloc.last_column  = ncol + yyleng - 1;
+   ncol += yyleng;
 }
+
