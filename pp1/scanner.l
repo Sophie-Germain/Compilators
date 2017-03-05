@@ -38,7 +38,7 @@ YYSTYPE yylval;  // manually declared for pp1, later Yacc provides
  */
 struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
 
-/* Macro: YY_USER_ACTION 
+/* Macro: YY_USER_ACTION
  * ---------------------
  * This flex built-in macro can be defined to provide an action which is
  * always executed prior to any matched rule's action. Basically, it is
@@ -51,7 +51,7 @@ struct yyltype yylloc; // manually dclared for pp1, later Yacc provides
 
 /*for yylloc */
 static int ncol, nrow;
-static void DoBeforeEachAction(); 
+static void DoBeforeEachAction();
 #define YY_USER_ACTION DoBeforeEachAction();
 
 %}
@@ -60,9 +60,9 @@ static void DoBeforeEachAction();
   * input file. Here is where you set options for the scanner, define lex
   * states, and can set up definitions to give names to regular expressions
   * as a simple substitution mechanism that allows for more readable
-  * entries in the Rules section later. 
+  * entries in the Rules section later.
   */
- 
+
 /* Definiciones: para leer más fácilmente
  */
 dig             ([0-9])
@@ -79,31 +79,31 @@ INICOMM       ("/*")
 FINCOMM       ("*/")
 COMM    ("//"[^\n]*)
 
-%x COMMENT    
+%x COMMENT
 
 %%             /* BEGIN RULES SECTION */
  /* All patterns and actions should be placed between the start and stop
-  * %% markers which delimit the Rules section. 
-  */ 
+  * %% markers which delimit the Rules section.
+  */
 
-"void"              { return T_Void;        }  
-"int"               { return T_Int;         }   
-"double"            { return T_Double;      }   
-"bool"              { return T_Bool;        }    
-"string"            { return T_String;      }   
-"class"             { return T_Class;       }   
-"null"              { return T_Null;        }   
-"extends"           { return T_Extends;     }   
-"this"              { return T_This;        }    
-"interface"         { return T_Interface;   }   
-"implements"        { return T_Implements;  }   
-"while"             { return T_While;       }   
-"for"               { return T_For;         }   
-"if"                { return T_If;          }   
-"else"              { return T_Else;        }   
-"return"            { return T_Return;      }   
-"break"             { return T_Break;       }   
-"New"               { return T_New;         }   
+"void"              { return T_Void;        }
+"int"               { return T_Int;         }
+"double"            { return T_Double;      }
+"bool"              { return T_Bool;        }
+"string"            { return T_String;      }
+"class"             { return T_Class;       }
+"null"              { return T_Null;        }
+"extends"           { return T_Extends;     }
+"this"              { return T_This;        }
+"interface"         { return T_Interface;   }
+"implements"        { return T_Implements;  }
+"while"             { return T_While;       }
+"for"               { return T_For;         }
+"if"                { return T_If;          }
+"else"              { return T_Else;        }
+"return"            { return T_Return;      }
+"break"             { return T_Break;       }
+"New"               { return T_New;         }
 "NewArray"          { return T_NewArray;    }
 "+"    {return '+';}
 "-"    {return '-';}
@@ -122,7 +122,7 @@ COMM    ("//"[^\n]*)
 "("    {return '(';}
 ")"    {return ')';}
 "{"    {return '{';}
-"}"    {return '}';}      
+"}"    {return '}';}
 "<="                { return T_LessEqual;   }
 ">="                { return T_GreaterEqual;}
 "=="                { return T_Equal;       }
@@ -130,11 +130,11 @@ COMM    ("//"[^\n]*)
 "&&"                { return T_And;         }
 "||"                { return T_Or;          }
 [\n]                { nrow++; ncol = 1;}
-[\t]                { ncol += 8; }  
-[ \t\n]+             ;
+[\t]                { ncol += 8; }
+[ \t]+             ;
 {operador}          { return yytext[0];     }
 
- 
+
 "true"|"false"      { yylval.boolConstant = (yytext[0] == 't');
                          return T_BoolConstant; }
 {entero}           { yylval.integerConstant = strtol(yytext, NULL, 10);
@@ -143,7 +143,7 @@ COMM    ("//"[^\n]*)
                          return T_IntConstant; }
 {DOUBLE}            { yylval.doubleConstant = atof(yytext);
                          return T_DoubleConstant; }
-{CADENA}            { yylval.stringConstant = strdup(yytext); 
+{CADENA}            { yylval.stringConstant = strdup(yytext);
                          return T_StringConstant; }
 {INI_CADENA}        { ReportError::UntermString(&yylloc, yytext); }
 
@@ -196,7 +196,7 @@ void InitScanner()
 
 static void DoBeforeEachAction()
 {
-   //yylloc.first_line   = nrow;
+   yylloc.first_line   = nrow;
    yylloc.first_column = ncol;
    yylloc.last_column  = ncol + yyleng - 1;
    ncol += yyleng;
