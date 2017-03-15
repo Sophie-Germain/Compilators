@@ -11,17 +11,17 @@ ITAM, Mexico City.
 ## Deliverable 1
 Preprocessor (macros and comments) and scanner implementation
 
-### Compilation
+#### Compilation
 Run 'make'
 
-### Tests
+#### Tests
 ./dcc < samples/test_file.frag > resultados.txt
 
 ## Deliverable 2
 Parser
-### Compilation
+#### Compilation
 Run 'make'
 
-### Tests
+#### Tests
 ./dcc < samples/test_file.decaf &> resultados.txt
 diff resultados.txt samples/test_file.out
