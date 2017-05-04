@@ -8,7 +8,6 @@ M.Sc. in Computer Science
 
 ITAM, Mexico City. 
 
-
 -------------------
 
 
