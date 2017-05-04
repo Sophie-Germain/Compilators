@@ -36,3 +36,10 @@ Run 'make'
 diff resultados.txt samples/test_file.out
 
 ## Deliverable 5
+Code generation
+#### Compilation
+Run 'make'
+
+#### Tests
+./dcc < samples/test_file.decaf &> resultados.txt
+diff resultados.txt samples/test_file.out
