@@ -37,6 +37,8 @@ Run 'make'
 
 #### Tests
 ./dcc < samples/test_file.decaf &> resultados.txt
+
+
 diff resultados.txt samples/test_file.out
 
 ## Deliverable 5
