@@ -4,6 +4,8 @@ Based on Lawrence Rauchwerger Texas A&M Decaf project, which is based on Maggie 
 
 Spring 2017.
 
+M.Sc. in Computer Science
+
 ITAM, Mexico City. 
 
 -------------------
