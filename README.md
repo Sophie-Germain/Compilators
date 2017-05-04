@@ -25,3 +25,12 @@ Run 'make'
 #### Tests
 ./dcc < samples/test_file.decaf &> resultados.txt
 diff resultados.txt samples/test_file.out
+
+## Deliverable 3,4
+Semantic analysis
+#### Compilation
+Run 'make'
+
+#### Tests
+./dcc < samples/test_file.decaf &> resultados.txt
+diff resultados.txt samples/test_file.out
